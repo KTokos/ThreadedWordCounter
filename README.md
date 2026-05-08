@@ -1,6 +1,6 @@
 # Threaded Word Counter
 
-** Project Description **
+**Project Description**
 
 Simply a sample project to help me learn multithreading within C++
 
