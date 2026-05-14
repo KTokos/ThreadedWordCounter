@@ -37,12 +37,6 @@ void findFiles()
         }
     }
 
-    // If queue is empty, return and never wake other threads
-    if (fileQueue.empty() == true)
-    {
-        return;
-    }
-
     // Ring the pager to wake up the processing threads
     cv_allFilesFound.notify_all();
 }
@@ -57,7 +51,7 @@ void readFile()
     cv_allFilesFound.wait(lock);
 
     // Process a file only if there is actually a file within the queue
-    if (fileQueue.empty() == false)
+    while (fileQueue.empty() == false)
     {
         // Get file name and pop from queue
         string fileName = fileQueue.front();
@@ -124,8 +118,8 @@ int main()
     // Create one thread for finding files
     workers.emplace_back(findFiles);
 
-    // Create two workers for processing files
-    for (int i = 0; i < 2; ++i) workers.emplace_back(readFile);
+    // Create one worker for processing files
+    workers.emplace_back(readFile);
 
     // Create one worker for adding counts
     workers.emplace_back(addUpCounts);
